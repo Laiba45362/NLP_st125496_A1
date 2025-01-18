@@ -50,14 +50,15 @@ def main():
     embedding_dict_pos, embedding_dict_neg, embedding_dict_glove = load_embeddings()
 
     # Set up the Streamlit app title and description
-    st.title("Word Similarity Search")
-    st.write("Enter a word to find the next 10 most similar words based on cosine similarity.")
+    st.title("🔍 Word Similarity Finder")
+    st.subheader("Find the top 10 most similar words based on cosine similarity.")
+    st.markdown("---")
 
     # Get user input for the target word
     user_target_word = st.text_input("Enter a word to search:", "run")  # Default word is "run"
 
     # Select the embedding model to use
-    model_choice = st.selectbox("Select Embedding Model", ["GloVe", "Skipgram Positive", "Skipgram Negative"])
+    model_choice = st.radio("Select Embedding Model", ["GloVe", "Skipgram Positive", "Skipgram Negative"])
 
     # Based on the model choice, select the appropriate embedding dictionary
     if model_choice == "GloVe":
@@ -69,15 +70,16 @@ def main():
 
     # If the user entered a word, compute the top 10 similar words
     if user_target_word:
-        with st.spinner('Finding similar words...'):
+        with st.spinner('🔄 Searching for similar words...'):
             next_10_cosine_for_user_word = find_next_10_cosine_words_for_word(user_target_word, embedding_dict, top_n=10)
 
             # Display results
+            st.markdown("---")
             if next_10_cosine_for_user_word == ["Word not in Corpus"]:
-                st.error("Word not in Corpus")
+                st.error(f"❌ The word **'{user_target_word}'** is not in the corpus. Try a different word.")
             else:
-                st.success(f"Top 10 similar words for '{user_target_word}':")
-                st.write(next_10_cosine_for_user_word)
+                st.success(f"✅ Top 10 similar words for **'{user_target_word}'**:")
+                st.markdown("\n".join([f"- {word}" for word in next_10_cosine_for_user_word]))
 
 if __name__ == "__main__":
     main()
